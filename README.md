@@ -1,46 +1,60 @@
-# Getting Started with Create React App
+# 📝 Task Management Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A **Task Management App** built with **React, TypeScript, and Tailwind CSS** for creating, updating, and managing tasks efficiently.
 
-## Available Scripts
+## 🚀 Features
+- ✅ Create, update, and delete tasks
+- 🔥 Set priority and status for tasks
+- 📱 Fully responsive UI with Tailwind CSS
+- ⚡ Data fetching with **RTK Query** and a custom `useFetch` hook
+- 🗄️ Uses **MockAPI** as a backend
 
-In the project directory, you can run:
+---
 
-### `yarn start`
+## 🛠️ Tech Stack
+- **Frontend**: React, TypeScript, Tailwind CSS
+- **State Management**: React Hooks
+- **Data Fetching**: RTK Query & Custom Hooks
+- **Backend**: MockAPI (for demonstration)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+---
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## 💻 Installation & Running the App
 
-### `yarn test`
+### 1️⃣ Clone the Repository
+```bash
+git clone https://github.com/your-username/task-manager.git
+cd task-manager
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2️⃣ Install Dependencies
+npm install
+# or
+yarn install
 
-### `yarn build`
+3️⃣ Start the Development Server
+npm run dev
+# or
+yarn dev
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+The application should now be running on http://localhost:3000 🚀
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+📝 Approach & Considerations
+1️⃣ Component Structure
+The app follows a modular component approach, where reusable components handle different UI elements.
+Key components include:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+TaskList → Displays tasks
+NewTask → Handles creating new tasks
+UpdateTask → Allows editing an existing task
+TaskDetail → Shows details of a task
+2️⃣ State & Data Fetching
+React Hooks manage local state
+Custom Hook (useFetch) handles API calls
+Optimized renders using useMemo & useCallback
+3️⃣ Error Handling
+Displays error messages for failed API requests
+Ensures UI doesn’t break on empty or invalid data
+✅ Additional Notes
+The app currently uses MockAPI for backend. Replace it with a real API in production.
+Add authentication for user-specific tasks.
+Consider integrating Redux Toolkit for global state management if scaling.
