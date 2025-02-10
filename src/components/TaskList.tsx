@@ -1,10 +1,13 @@
-import { useState } from "react"
+import { useState, useMemo, useCallback } from "react"
 import { IoTrash } from "react-icons/io5";
 import { AiOutlineEdit } from "react-icons/ai";
 import TaskDetail from "./TaskDetail";
 import { IoIosSearch, IoIosArrowDown } from "react-icons/io";
 import useFetch, { Task } from "./useFetchTodos";
-import NewTask from "./NewTask";
+import UpdateTask from "./UpdateTask";
+import TaskItem from "./TaskItem";
+
+type Priority = "low" | "medium" | "high";
 
 export const TaskList = () => {
     const [status, setStatus] = useState('All')
@@ -14,23 +17,60 @@ export const TaskList = () => {
     const [openPriority, setOpenPriority] = useState(false)
     const [openForm, setOpenForm] = useState<Task | null>(null)
     const [searchTerm, setSearchTerm] = useState("");
+    type SortType = "priority-asc" | "priority-desc" | "dueDate-asc" | "dueDate-desc";
+    const [sortType, setSortType] = useState<SortType>("priority-asc");
     const url = 'https://67a9967e6e9548e44fc40ffa.mockapi.io/api/todos'
     const {data: todoData, loading, error, deleteData, refetch} = useFetch(url)
 
-    const filteredTodos = Array.isArray(todoData)? todoData?.filter((todo) => {
-        const matchesStatus = status === 'All' ? todo : status === 'To-do' ? todo.status === 'to-do' : status === 'In-progress' ? todo.status === 'in-progress' : status === 'Done' ? todo.status === 'done' : priority === 'Low' ? todo.priority === 'low' : priority === 'Medium' ? todo.priority === 'medium' : priority === 'High' ? todo.priority === 'high' : todo.priority === '';
-        const matchesPriority = !priority || todo.priority === priority.toLowerCase();
-        const matchesSearch = todo.title.toLowerCase().includes(searchTerm.toLowerCase()) || todo.description.toLowerCase().includes(searchTerm.toLowerCase());
-        return matchesStatus && matchesPriority && matchesSearch;
-    }): [];
+    const filteredTodos = useMemo(() => {
+        if (!Array.isArray(todoData)) return [];
+        return todoData.filter((todo) => {
+            const matchesStatus = status === "All" || todo.status === status?.toLowerCase();
+            const matchesPriority = !priority || todo.priority === priority?.toLowerCase();
+            const matchesSearch = todo.title?.toLowerCase().includes(searchTerm?.toLowerCase()) || todo.description?.toLowerCase().includes(searchTerm?.toLowerCase());
+    
+            return matchesStatus && matchesPriority && matchesSearch;
+        });
+    }, [todoData, status, priority, searchTerm]);
 
-    const changeStatus=(e:React.MouseEvent<HTMLParagraphElement>)=>{
-        setStatus(e.currentTarget.innerText)
-    }
+    
+  
+    const priorityOrder: Record<Priority, number> = { low: 1, medium: 2, high: 3 };
+  
+    // Sorting function
+    const sortedTodos = useMemo(() => {
+        return [...filteredTodos].sort((a, b) => {
+            if (sortType.includes("priority")) {
+                const priorityComparison = priorityOrder[a.priority as Priority] - priorityOrder[b.priority as Priority];
+                if (priorityComparison !== 0) {
+                    return sortType === "priority-asc" ? priorityComparison : -priorityComparison;
+                }
+            }
+    
+            if (sortType.includes("dueDate")) {
+                const dateA = new Date(a.dueDate).getTime();
+                const dateB = new Date(b.dueDate).getTime();
+                return sortType === "dueDate-asc" ? dateA - dateB : dateB - dateA;
+            }
+    
+            return 0;
+        });
+    }, [filteredTodos, sortType]);
+  
 
-    const changePriority=(e:React.MouseEvent<HTMLParagraphElement>)=>{
-        setPriority(e.currentTarget.innerText)
-    }
+    const changeStatus = useCallback((e: React.MouseEvent<HTMLParagraphElement>) => {
+        const newStatus = e.currentTarget.innerText;
+        if (status !== newStatus) {
+            setStatus(newStatus);
+        }
+    }, [status]);
+    
+    const changePriority = useCallback((e: React.MouseEvent<HTMLParagraphElement>) => {
+        const newPriority = e.currentTarget.innerText;
+        if (priority !== newPriority) {
+            setPriority(newPriority);
+        }
+    }, [priority]);
 
     const showDateSort=()=>{
         setOpenDate(prev=>!prev)
@@ -48,11 +88,11 @@ export const TaskList = () => {
         setOpenForm(null)
     }
 
-    const deleteTask = async (e: React.FormEvent, id:number) => {
-        e.preventDefault()
+    const deleteTask = useCallback(async (e: React.FormEvent, id: number) => {
+        e.preventDefault();
         await deleteData(id);
-        refetch()
-    };
+        refetch();
+    }, [deleteData, refetch]);
 
   return (
     <div className="task-main-body">
@@ -78,34 +118,20 @@ export const TaskList = () => {
             <span onClick={showDateSort}>
                 Due date <IoIosArrowDown/>
                 {openDate && <ul className="form-dropdown">
-                    <li>Ascending</li>
-                    <li>Descending</li>
+                    <li onClick={() => setSortType("dueDate-asc")}>Ascending</li>
+                    <li onClick={() => setSortType("dueDate-desc")}>Descending</li>
                 </ul>}
             </span>
             <span onClick={showPrioritySort}>
                 Priority <IoIosArrowDown/>
                 {openPriority && <ul className="form-dropdown">
-                    <li>Ascending</li>
-                    <li>Descending</li>
+                    <li onClick={() => setSortType("priority-asc")}>Ascending</li>
+                    <li onClick={() => setSortType("priority-desc")}>Descending</li>
                 </ul>}
             </span>
         </div>
-        {loading ? <div>Loading...</div> : filteredTodos.length > 0 ? filteredTodos.map((todo)=> <div key={todo.id} className="task-wrapper" onClick={()=>setSelectedToDo(todo)}>
-            <div className="task-part1">
-                <h6>{todo.title}</h6>
-                <p>{todo.description}</p>
-                <sub>Due date: {todo.dueDate}</sub>
-            </div>
-            <div className="task-part2">
-                <div>{todo.priority}</div>
-                <div>{todo.status}</div>
-                <div>
-                    <span className="task-controls" onClick={(e)=>{e.stopPropagation(); setOpenForm(todo)}}><AiOutlineEdit/> Edit</span>
-                    <span className="task-controls" onClick={(e)=>{e.stopPropagation();deleteTask(e, todo.id)}}><IoTrash color="red"/> Delete</span>
-                </div>
-            </div>
-        </div>) : error ? <div>{error}</div>: <div>No task(s) to display</div>}
-        {openForm && <NewTask todos={openForm} onClose={closeForm}/>}
+        {loading ? <div>Loading...</div> : sortedTodos.length > 0 ? sortedTodos.map((todo)=> <TaskItem key={todo.id} todo={todo} setOpenForm={setOpenForm} deleteTask={deleteTask} setSelectedToDo={setSelectedToDo} />) : error ? <div>{error}</div>: <div>No task(s) to display</div>}
+        {openForm && <div className="update-form"><UpdateTask todos={openForm} onClose={closeForm}/></div>}
         {selectedTodo && <TaskDetail todos={selectedTodo} onClose={closeTodoDetail}/>}
     </div>
   )

@@ -5,7 +5,6 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #F3EFEE;
   font-family: sans-serif;
 }
 
@@ -16,6 +15,10 @@ code {
 
 .task-manager-container{
   padding: 20px;
+  max-width: 500px;
+  margin: auto;
+  background-color: #F3EFEE;
+  border-radius: 15px;
 }
 
 .task-manager-container > h1{
@@ -34,6 +37,7 @@ code {
   justify-content: center;
   gap: 10px;
   font-size: 16px;
+  cursor: pointer;
 }
 
 .task-form{
@@ -75,6 +79,7 @@ code {
   position: absolute;
   top: 36px;
   right: 10px;
+  cursor: pointer;
 }
 
 .form-dropdown{
@@ -91,6 +96,7 @@ code {
 
 .form-dropdown > li{
   font-size: 14px;
+  cursor: pointer;
 }
 
 .form-controls{
@@ -104,6 +110,7 @@ code {
   border-radius: 5px;
   color: #FFFFFF;
   font-size: 13px;
+  cursor: pointer;
 }
 
 .form-controls > button:first-of-type{
@@ -154,6 +161,10 @@ code {
   gap: 16px;
 }
 
+.status-filter > span{
+  cursor: pointer;
+}
+
 .filter-bg{
   background-color: #393433;
   color: #FFFFFF;
@@ -175,6 +186,7 @@ code {
   gap: 5px;
   padding: 5px;
   border: 1px solid #393433;
+  cursor: pointer;
 }
 
 .task-sorting > span > .form-dropdown{
@@ -296,6 +308,7 @@ code {
   font-size: 14px;
   align-items: center;
   position: relative;
+  cursor: pointer;
 }
 
 .task-detail-wrapper > div > .form-dropdown{
@@ -315,4 +328,13 @@ code {
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   z-index: 10;
+}
+
+.update-form{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 300px;
+  transform: translateX(-50%) translateY(-50%);
+  z-index: 20; 
 }
