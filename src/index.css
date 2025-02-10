@@ -291,7 +291,6 @@ code {
 
 .task-detail-wrapper > div{
   display: flex;
-  /* gap: 4px; */
   font-size: 14px;
   align-items: center;
   position: relative;

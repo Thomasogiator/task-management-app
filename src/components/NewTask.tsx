@@ -49,7 +49,6 @@ const NewTask: React.FC<NewTaskProps> = ({onClose}) => {
     }
 
     const dataToSubmit = {...data, priority: priority, status: todoStatus}
-    console.log(todoData, loading, error)
     
     const createNewTask = async (e: React.FormEvent) => {
         e.preventDefault()

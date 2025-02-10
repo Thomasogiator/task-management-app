@@ -15,7 +15,7 @@ const TaskDetail: React.FC<TaskDetailProps> = ({onClose, todos}) => {
 
     const priorities = ['low', 'medium', 'high']
     const todoStatuses = ['to-do', 'in-progress', 'done']
-    console.log(todos)
+    
     const togglePriority =()=>{
         setOpenPriority(prev=>!prev)
     }
@@ -40,13 +40,13 @@ const TaskDetail: React.FC<TaskDetailProps> = ({onClose, todos}) => {
             <p><b>Description</b>: {todos?.description}</p>
             <sub><b>Due date:</b> {todos?.dueDate}</sub>
             <div>
-                <b>Priority</b>: {todos?.priority} <IoIosArrowDown onClick={togglePriority}/>
+                <b>Priority</b>: {todos?.priority || priority} <IoIosArrowDown onClick={togglePriority}/>
                 {openPriority && <ul className="form-dropdown">
                     {priorities.length > 0 ? priorities.map((priority, index)=> <li onClick={()=>selectPriority(priority)} key={index}>{priority}</li>) : 'No priorities to display'}
                 </ul>}
             </div>
             <div>
-                <b>Status</b>: {todos?.status} <IoIosArrowDown onClick={toggleStatus}/>
+                <b>Status</b>: {todos?.status || todoStatus} <IoIosArrowDown onClick={toggleStatus}/>
                 {openStatus && <ul className="form-dropdown">
                 {todoStatuses.length > 0 ? todoStatuses.map((status, index)=> <li onClick={()=>selectStatus(status)} key={index}>{status}</li>) : 'No status to display'}
             </ul>}

@@ -14,7 +14,6 @@ export const TaskList = () => {
     const [openModal, setOpenModal] = useState<boolean | number>(false)
     const url = 'https://67a9967e6e9548e44fc40ffa.mockapi.io/api/todos'
     const {data: todoData, loading, error, deleteData} = useFetch(url)
-    console.log(todoData)
 
     const filteredTodos = todoData?.filter((todo)=> status === 'All' ? todo : status === 'To-do' ? todo.status === 'to-do' : status === 'In-progress' ? todo.status === 'in-progress' : status === 'Done' ? todo.status === 'done' : priority === 'Low' ? todo.priority === 'low' : priority === 'Medium' ? todo.priority === 'medium' : priority === 'High' ? todo.priority === 'high' : todo.priority === '')
     const changeStatus=(e:React.MouseEvent<HTMLParagraphElement>)=>{
