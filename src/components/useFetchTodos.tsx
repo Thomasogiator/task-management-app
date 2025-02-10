@@ -72,7 +72,7 @@ const useFetch = (url: string) => {
     }
   };
 
-  return { data, loading, error, postData, updateData, deleteData };
+  return { data, loading, error, postData, updateData, deleteData, refetch: fetchData };
 };
 
 export default useFetch;

@@ -4,6 +4,7 @@ import { AiOutlineEdit } from "react-icons/ai";
 import TaskDetail from "./TaskDetail";
 import { IoIosSearch, IoIosArrowDown } from "react-icons/io";
 import useFetch, { Task } from "./useFetchTodos";
+import NewTask from "./NewTask";
 
 export const TaskList = () => {
     const [status, setStatus] = useState('All')
@@ -11,17 +12,17 @@ export const TaskList = () => {
     const [selectedTodo, setSelectedToDo] = useState<Task | null>(null)
     const [openDate, setOpenDate] = useState(false)
     const [openPriority, setOpenPriority] = useState(false)
-    const [openModal, setOpenModal] = useState<boolean | number>(false)
+    const [openForm, setOpenForm] = useState<Task | null>(null)
     const [searchTerm, setSearchTerm] = useState("");
     const url = 'https://67a9967e6e9548e44fc40ffa.mockapi.io/api/todos'
-    const {data: todoData, loading, error, deleteData} = useFetch(url)
+    const {data: todoData, loading, error, deleteData, refetch} = useFetch(url)
 
-    const filteredTodos = todoData?.filter((todo) => {
+    const filteredTodos = Array.isArray(todoData)? todoData?.filter((todo) => {
         const matchesStatus = status === 'All' ? todo : status === 'To-do' ? todo.status === 'to-do' : status === 'In-progress' ? todo.status === 'in-progress' : status === 'Done' ? todo.status === 'done' : priority === 'Low' ? todo.priority === 'low' : priority === 'Medium' ? todo.priority === 'medium' : priority === 'High' ? todo.priority === 'high' : todo.priority === '';
         const matchesPriority = !priority || todo.priority === priority.toLowerCase();
         const matchesSearch = todo.title.toLowerCase().includes(searchTerm.toLowerCase()) || todo.description.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesStatus && matchesPriority && matchesSearch;
-    });
+    }): [];
 
     const changeStatus=(e:React.MouseEvent<HTMLParagraphElement>)=>{
         setStatus(e.currentTarget.innerText)
@@ -43,9 +44,14 @@ export const TaskList = () => {
         setSelectedToDo(null)
     }
 
+    const closeForm=()=>{
+        setOpenForm(null)
+    }
+
     const deleteTask = async (e: React.FormEvent, id:number) => {
         e.preventDefault()
         await deleteData(id);
+        refetch()
     };
 
   return (
@@ -94,12 +100,12 @@ export const TaskList = () => {
                 <div>{todo.priority}</div>
                 <div>{todo.status}</div>
                 <div>
-                    <span className="task-controls"><AiOutlineEdit/> Edit</span>
-                    <span className="task-controls" onClick={(e)=>deleteTask(e, todo.id)}><IoTrash color="red"/> Delete</span>
+                    <span className="task-controls" onClick={(e)=>{e.stopPropagation(); setOpenForm(todo)}}><AiOutlineEdit/> Edit</span>
+                    <span className="task-controls" onClick={(e)=>{e.stopPropagation();deleteTask(e, todo.id)}}><IoTrash color="red"/> Delete</span>
                 </div>
             </div>
-            
         </div>) : error ? <div>{error}</div>: <div>No task(s) to display</div>}
+        {openForm && <NewTask todos={openForm} onClose={closeForm}/>}
         {selectedTodo && <TaskDetail todos={selectedTodo} onClose={closeTodoDetail}/>}
     </div>
   )

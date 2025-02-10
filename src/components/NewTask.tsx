@@ -1,19 +1,21 @@
 import { useEffect, useState } from "react"
 import { IoIosArrowDown } from "react-icons/io";
 import useFetch from "./useFetchTodos";
+import { Task } from "./useFetchTodos";
 
 interface NewTaskProps{
-    onClose: ()=> void
+    onClose?: ()=> void,
+    todos?: Task | null
 }
 
-const NewTask: React.FC<NewTaskProps> = ({onClose}) => {
+const NewTask: React.FC<NewTaskProps> = ({onClose, todos}) => {
     const [priority, setPriority] = useState('')
     const [todoStatus, setTodoStatus] = useState('')
     const [openPriority, setOpenPriority] = useState(false)
     const [openStatus, setOpenStatus] = useState(false)
     const [createSuccess, setCreateSuccess] = useState(false)
     const url = 'https://67a9967e6e9548e44fc40ffa.mockapi.io/api/todos'
-    const {data: todoData, loading, error, postData} = useFetch(url)
+    const {data: todoData, loading, error, postData, refetch} = useFetch(url)
     const [data, setData] = useState({
         title: '',
         description: '',
@@ -57,7 +59,7 @@ const NewTask: React.FC<NewTaskProps> = ({onClose}) => {
     };
 
     useEffect(()=>{
-        if(createSuccess){
+        if(createSuccess && onClose){
             onClose()
             setCreateSuccess(false)
         }
@@ -97,6 +99,7 @@ const NewTask: React.FC<NewTaskProps> = ({onClose}) => {
             <button type="submit">Done</button>
             <button onClick={onClose}>Cancel</button>
         </div>
+        <div>{error}</div>
     </form>
   )
 }
