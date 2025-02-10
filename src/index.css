@@ -193,6 +193,8 @@ code {
   align-items: center;
   justify-content: space-between;
   gap: 5px;
+  position: relative;
+  cursor: pointer;
 }
 
 .task-part1, .task-part2{
@@ -229,4 +231,87 @@ code {
 
 .task-part1 > sub{
   font-size: 12px;
+}
+
+.task-part2 > div{
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.task-part2 > div:last-of-type{
+  position: absolute;
+  top: 100%;
+  right: 10px;
+}
+
+.task-controls{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.task-detail-wrapper{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 300px;
+  transform: translateX(-50%) translateY(-50%);
+  z-index: 20;
+  background-color: #FFFFFF;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.task-detail-wrapper > h6, p{
+  margin: 0;
+}
+
+.task-detail-wrapper > h6{
+  font-size: 18px;
+}
+
+.task-detail-wrapper > p{
+  font-size: 14px;
+  white-space: wrap;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+
+.task-detail-wrapper > sub{
+  font-size: 12px;
+}
+
+.task-detail-wrapper > div{
+  display: flex;
+  /* gap: 4px; */
+  font-size: 14px;
+  align-items: center;
+  position: relative;
+}
+
+.task-detail-wrapper > div > .form-dropdown{
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #FFFFFF;
+  margin-top: 0;
+  z-index: 30;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10;
 }

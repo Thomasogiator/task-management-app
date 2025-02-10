@@ -3,13 +3,20 @@ import { IoTrash } from "react-icons/io5";
 import { AiOutlineEdit } from "react-icons/ai";
 import TaskDetail from "./TaskDetail";
 import { IoIosSearch, IoIosArrowDown } from "react-icons/io";
+import useFetch, { Task } from "./useFetchTodos";
 
 export const TaskList = () => {
     const [status, setStatus] = useState('All')
     const [priority, setPriority] = useState('')
+    const [selectedTodo, setSelectedToDo] = useState<Task | null>(null)
     const [openDate, setOpenDate] = useState(false)
     const [openPriority, setOpenPriority] = useState(false)
+    const [openModal, setOpenModal] = useState<boolean | number>(false)
+    const url = 'https://67a9967e6e9548e44fc40ffa.mockapi.io/api/todos'
+    const {data: todoData, loading, error, deleteData} = useFetch(url)
+    console.log(todoData)
 
+    const filteredTodos = todoData?.filter((todo)=> status === 'All' ? todo : status === 'To-do' ? todo.status === 'to-do' : status === 'In-progress' ? todo.status === 'in-progress' : status === 'Done' ? todo.status === 'done' : priority === 'Low' ? todo.priority === 'low' : priority === 'Medium' ? todo.priority === 'medium' : priority === 'High' ? todo.priority === 'high' : todo.priority === '')
     const changeStatus=(e:React.MouseEvent<HTMLParagraphElement>)=>{
         setStatus(e.currentTarget.innerText)
     }
@@ -25,6 +32,23 @@ export const TaskList = () => {
     const showPrioritySort=()=>{
         setOpenPriority(prev=>!prev)
     }
+
+    const showTodoDetail=(id: number, todo: Task)=>{
+        if(openModal === id){
+            return setOpenModal(false)
+        }
+        setOpenModal(id)
+        setSelectedToDo(todo)
+    }
+
+    const closeTodoDetail=()=>{
+        setSelectedToDo(null)
+    }
+
+    const deleteTask = async (e: React.FormEvent, id:number) => {
+        e.preventDefault()
+        await deleteData(id);
+    };
 
   return (
     <div className="task-main-body">
@@ -62,22 +86,23 @@ export const TaskList = () => {
                 </ul>}
             </span>
         </div>
-        <div className="task-wrapper">
+        {loading ? <div>Loading...</div> : filteredTodos.length > 0 ? filteredTodos.map((todo)=> <div key={todo.id} className="task-wrapper" onClick={()=>setSelectedToDo(todo)}>
             <div className="task-part1">
-                <h6>Title</h6>
-                <p>DescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescription</p>
-                <sub>Due date: </sub>
+                <h6>{todo.title}</h6>
+                <p>{todo.description}</p>
+                <sub>Due date: {todo.dueDate}</sub>
             </div>
             <div className="task-part2">
-                <div>Priority</div>
-                <div>Status</div>
+                <div>{todo.priority}</div>
+                <div>{todo.status}</div>
                 <div>
-                    <span><AiOutlineEdit/> Edit</span>
-                    <span><IoTrash/> Delete</span>
+                    <span className="task-controls"><AiOutlineEdit/> Edit</span>
+                    <span className="task-controls" onClick={(e)=>deleteTask(e, todo.id)}><IoTrash color="red"/> Delete</span>
                 </div>
             </div>
-        </div>
-        <TaskDetail/>
+            
+        </div>) : error ? <div>{error}</div>: <div>No task(s) to display</div>}
+        {selectedTodo && <TaskDetail todos={selectedTodo} onClose={closeTodoDetail}/>}
     </div>
   )
 }

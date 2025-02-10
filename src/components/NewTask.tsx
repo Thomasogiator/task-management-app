@@ -1,5 +1,6 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { IoIosArrowDown } from "react-icons/io";
+import useFetch from "./useFetchTodos";
 
 interface NewTaskProps{
     onClose: ()=> void
@@ -10,6 +11,9 @@ const NewTask: React.FC<NewTaskProps> = ({onClose}) => {
     const [todoStatus, setTodoStatus] = useState('')
     const [openPriority, setOpenPriority] = useState(false)
     const [openStatus, setOpenStatus] = useState(false)
+    const [createSuccess, setCreateSuccess] = useState(false)
+    const url = 'https://67a9967e6e9548e44fc40ffa.mockapi.io/api/todos'
+    const {data: todoData, loading, error, postData} = useFetch(url)
     const [data, setData] = useState({
         title: '',
         description: '',
@@ -45,9 +49,23 @@ const NewTask: React.FC<NewTaskProps> = ({onClose}) => {
     }
 
     const dataToSubmit = {...data, priority: priority, status: todoStatus}
-    console.log(dataToSubmit)
+    console.log(todoData, loading, error)
+    
+    const createNewTask = async (e: React.FormEvent) => {
+        e.preventDefault()
+        await postData(dataToSubmit);
+        setCreateSuccess(true)
+    };
+
+    useEffect(()=>{
+        if(createSuccess){
+            onClose()
+            setCreateSuccess(false)
+        }
+    }, [createSuccess])
+
   return (
-    <form className="task-form">
+    <form onSubmit={createNewTask} className="task-form">
         <section className="input-field">
             <label htmlFor="title">Title</label>
             <input type="text" name="title" value={data.title} placeholder='Enter task name' onChange={handleDataChange}/>
@@ -77,7 +95,7 @@ const NewTask: React.FC<NewTaskProps> = ({onClose}) => {
             </ul>}
         </section>
         <div className="form-controls">
-            <button>Done</button>
+            <button type="submit">Done</button>
             <button onClick={onClose}>Cancel</button>
         </div>
     </form>

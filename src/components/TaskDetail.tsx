@@ -1,6 +1,13 @@
 import { useState } from "react"
+import { Task } from "./useFetchTodos"
+import { IoIosArrowDown } from "react-icons/io";
 
-const TaskDetail = () => {
+interface TaskDetailProps{
+    onClose: ()=> void,
+    todos: Task | null
+}
+
+const TaskDetail: React.FC<TaskDetailProps> = ({onClose, todos}) => {
     const [priority, setPriority] = useState('')
     const [todoStatus, setTodoStatus] = useState('')
     const [openPriority, setOpenPriority] = useState(false)
@@ -8,7 +15,7 @@ const TaskDetail = () => {
 
     const priorities = ['low', 'medium', 'high']
     const todoStatuses = ['to-do', 'in-progress', 'done']
-
+    console.log(todos)
     const togglePriority =()=>{
         setOpenPriority(prev=>!prev)
     }
@@ -26,27 +33,26 @@ const TaskDetail = () => {
     }
 
   return (
-    <div>
-        <div>
-            <h6>Title</h6>
-            <p>Description</p>
-            <sub>Due date: </sub>
-        </div>
-        <div>
+    <>
+        <div onClick={(e)=>{e.stopPropagation(); onClose()}} className="overlay"></div>
+        <div className="task-detail-wrapper">
+            <h6><b>Name</b>: {todos?.title}</h6>
+            <p><b>Description</b>: {todos?.description}</p>
+            <sub><b>Due date:</b> {todos?.dueDate}</sub>
             <div>
-                Priority
-                {openPriority && <ul>
+                <b>Priority</b>: {todos?.priority} <IoIosArrowDown onClick={togglePriority}/>
+                {openPriority && <ul className="form-dropdown">
                     {priorities.length > 0 ? priorities.map((priority, index)=> <li onClick={()=>selectPriority(priority)} key={index}>{priority}</li>) : 'No priorities to display'}
                 </ul>}
             </div>
             <div>
-                Status
-                {openStatus && <ul>
+                <b>Status</b>: {todos?.status} <IoIosArrowDown onClick={toggleStatus}/>
+                {openStatus && <ul className="form-dropdown">
                 {todoStatuses.length > 0 ? todoStatuses.map((status, index)=> <li onClick={()=>selectStatus(status)} key={index}>{status}</li>) : 'No status to display'}
             </ul>}
             </div>
         </div>
-    </div>
+    </>
   )
 }
 
